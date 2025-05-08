@@ -1,0 +1,24 @@
+package domain
+
+import (
+	"context"
+	"net/http"
+	"teste/internals/core/dto"
+)
+
+type Banco struct {
+	ID   int64  `json:"id" db:"id"`
+	Nome string `json:"nome" db:"nome"`
+}
+
+type BancoRepository interface {
+	Create(context.Context, *dto.BancoInput) (*Banco, error)
+}
+
+type BancoUseCase interface {
+	Create(context.Context, *dto.BancoInput) (*Banco, error)
+}
+
+type BancoController interface {
+	Create(http.ResponseWriter, *http.Request)
+}
