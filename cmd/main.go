@@ -15,9 +15,8 @@ import (
 func initConfig() {
 	viper.SetConfigName(".env")  
 	viper.SetConfigType("env")   
-	viper.AddConfigPath(".")   
-
-	viper.AutomaticEnv()
+	viper.AddConfigPath("/app")
+	viper.AutomaticEnv()      
 
 	err := viper.ReadInConfig()
 	if err != nil {
