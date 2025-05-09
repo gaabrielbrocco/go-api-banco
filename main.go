@@ -4,57 +4,56 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 	"teste/internals/core/usecase"
 	"teste/internals/infra/repository"
 	"teste/internals/infra/server"
 
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 	_ "github.com/lib/pq"
 )
 
-func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
+func initConfig() {
+	viper.SetConfigName(".env")  
+	viper.SetConfigType("env")   
+	viper.AddConfigPath(".")   
+
+	viper.AutomaticEnv()
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalf("Error reading configuration file: %v", err)
 	}
-	return defaultValue
 }
 
 func main() {
-
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	initConfig()
 
 	connStr := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		getEnv("DB_HOST", "db"),
-		getEnv("DB_PORT", "5432"),
-		getEnv("DB_USER", "postgres"),
-		getEnv("DB_PASSWORD", "postgres"),
-		getEnv("DB_NAME", "banco"),
-		getEnv("DB_SSL_MODE", "disable"),
+		viper.GetString("DB_HOST"),
+		viper.GetString("DB_PORT"),
+		viper.GetString("DB_USER"),
+		viper.GetString("DB_PASSWORD"),
+		viper.GetString("DB_NAME"),
+		viper.GetString("DB_SSL_MODE"),
 	)
-
-	fmt.Println("Conectando no banco de dados:", connStr)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatal("Error connecting to database", err)
+		log.Fatal("Erro ao conectar no banco de dados:", err)
 	}
-
 	defer db.Close()
 
 	bancoRepository := repository.NewBancoRepository(db)
 	bancoUseCase := usecase.NewBancoUseCase(bancoRepository)
 
-	port := getEnv("HTTP_PORT", "8080")
+	port := viper.GetString("HTTP_PORT")
 	srv := server.NewServer(bancoUseCase, port)
 	srv.ConfigureRoutes()
 
 	if err := srv.Start(); err != nil {
-		log.Fatal("Error starting server ", err)
+		log.Fatal("Erro ao iniciar o servidor:", err)
 	}
-	fmt.Println("Rodando na porta: ", port)
 
+	fmt.Println("Rodando na porta:", port)
 }

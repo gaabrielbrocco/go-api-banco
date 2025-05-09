@@ -27,6 +27,7 @@ func (server *Server) ConfigureRoutes() {
 	bancoController := controller.NewBancoController(server.bancoUseCase)
 
 	server.router.Post("/banco", bancoController.Create)
+	server.router.Get("/banco/{id}", bancoController.GetByID)
 
 }
 

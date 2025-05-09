@@ -10,8 +10,12 @@ type bancoUseCase struct {
 	bancoRepository domain.BancoRepository
 }
 
-func (usecase *bancoUseCase) Create(ctx context.Context, input *dto.BancoInput) (*domain.Banco, error) {
+func (usecase *bancoUseCase) Create(ctx context.Context, input *dto.BancoInput) (domain.Banco, error) {
 	return usecase.bancoRepository.Create(ctx, input)
+}
+
+func (usecase *bancoUseCase) GetByID(ctx context.Context, id int64) (domain.Banco, error) {
+	return usecase.bancoRepository.GetByID(ctx, id)
 }
 
 func NewBancoUseCase(bancoRepository domain.BancoRepository) domain.BancoUseCase {
