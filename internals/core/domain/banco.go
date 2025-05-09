@@ -14,15 +14,17 @@ type Banco struct {
 type BancoRepository interface {
 	Create(context.Context, *dto.BancoInput) (Banco, error)
 	GetByID(context.Context, int64) (Banco, error)
+	ListAll(context.Context) ([]Banco, error)
 }
-
 
 type BancoUseCase interface {
 	Create(context.Context, *dto.BancoInput) (Banco, error)
 	GetByID(context.Context, int64) (Banco, error)
+	ListAll(context.Context) ([]Banco, error)
 }
 
 type BancoController interface {
 	Create(http.ResponseWriter, *http.Request)
 	GetByID(http.ResponseWriter, *http.Request)
+	ListAll(http.ResponseWriter, *http.Request)
 }

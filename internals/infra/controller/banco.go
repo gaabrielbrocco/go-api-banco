@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"database/sql"
-	"fmt"
 	"strconv"
 	"net/http"
 	"teste/internals/core/domain"
@@ -26,8 +25,6 @@ func (controller *bancoController) Create(response http.ResponseWriter, request 
 	}
 
 	output, err := controller.bancoUseCase.Create(ctx, &input)
-	fmt.Println(output)
-	fmt.Println(err)
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 		return
@@ -65,6 +62,23 @@ func (controller *bancoController) GetByID(response http.ResponseWriter, request
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func (controller *bancoController) ListAll(response http.ResponseWriter, request *http.Request) {
+	ctx := request.Context()
+	
+	output, err := controller.bancoUseCase.ListAll(ctx)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	err = json.NewEncoder(response).Encode(output)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 }
 
 func NewBancoController(bancoUseCase domain.BancoUseCase) domain.BancoController {

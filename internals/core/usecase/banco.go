@@ -18,6 +18,10 @@ func (usecase *bancoUseCase) GetByID(ctx context.Context, id int64) (domain.Banc
 	return usecase.bancoRepository.GetByID(ctx, id)
 }
 
+func (usecase *bancoUseCase) ListAll(ctx context.Context) ([]domain.Banco, error) {
+	return usecase.bancoRepository.ListAll(ctx)
+}
+
 func NewBancoUseCase(bancoRepository domain.BancoRepository) domain.BancoUseCase {
 	return &bancoUseCase{
 		bancoRepository: bancoRepository,
