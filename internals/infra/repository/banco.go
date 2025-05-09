@@ -64,6 +64,32 @@ func (repository *bancoRepository) ListAll(ctx context.Context) ([]domain.Banco,
 	return bancos, nil
 }
 
+func (repository *bancoRepository) DeleteByID(ctx context.Context, id int64) (domain.Banco, error) {
+	var banco domain.Banco
+
+	query := "DELETE FROM banco WHERE id = $1 RETURNING *"
+
+	err := repository.db.QueryRowContext(ctx, query, id).Scan(&banco.ID, &banco.Nome)
+	if err != nil {
+		return domain.Banco{}, err
+	}
+
+	return banco, nil
+}
+
+func (repository *bancoRepository) Update(ctx context.Context, id int64, input dto.BancoInput) (domain.Banco, error) {
+	var banco domain.Banco
+
+	query := "UPDATE banco SET nome = $1 WHERE id = $2 RETURNING *"
+
+	err := repository.db.QueryRowContext(ctx, query, input.Nome, id).Scan(&banco.ID, &banco.Nome)
+	if err != nil {
+		return domain.Banco{}, err
+	}
+
+	return banco, nil
+}
+
 func NewBancoRepository(db *sql.DB) domain.BancoRepository {
 	return &bancoRepository{
 		db: db,

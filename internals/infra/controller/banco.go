@@ -23,6 +23,10 @@ func (controller *bancoController) Create(response http.ResponseWriter, request 
 		http.Error(response, err.Error(), http.StatusBadRequest)
 		return
 	}
+	if input.Nome == "" {
+		http.Error(response, "nome is required", http.StatusBadRequest)
+		return
+	}
 
 	output, err := controller.bancoUseCase.Create(ctx, &input)
 	if err != nil {
@@ -78,7 +82,65 @@ func (controller *bancoController) ListAll(response http.ResponseWriter, request
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
 
+func (controller *bancoController) DeleteByID(response http.ResponseWriter, request *http.Request) {
+	ctx := request.Context()
+
+	idString := chi.URLParam(request, "id")
+	if idString == "" {
+		http.Error(response, "id is required", http.StatusBadRequest)
+	}
+
+	id, err := strconv.ParseInt(idString, 10, 64)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusBadRequest)
+	}
+
+	output, err := controller.bancoUseCase.DeleteByID(ctx, id)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+	}
+
+	err = json.NewEncoder(response).Encode(output)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (controller *bancoController) Update(response http.ResponseWriter, request *http.Request) {
+	ctx := request.Context()
+
+	idString := chi.URLParam(request, "id")
+	if idString == "" {
+		http.Error(response, "id is required", http.StatusBadRequest)
+	}
+
+	id, err := strconv.ParseInt(idString, 10, 64)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusBadRequest)
+	}
+
+	var input dto.BancoInput
+	if err := json.NewDecoder(request.Body).Decode(&input); err != nil {
+		http.Error(response, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if input.Nome == "" {
+		http.Error(response, "nome is required", http.StatusBadRequest)
+		return
+	}
+
+	output, err := controller.bancoUseCase.Update(ctx, id, input)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+	}
+
+	err = json.NewEncoder(response).Encode(output)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func NewBancoController(bancoUseCase domain.BancoUseCase) domain.BancoController {

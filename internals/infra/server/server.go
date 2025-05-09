@@ -29,6 +29,8 @@ func (server *Server) ConfigureRoutes() {
 	server.router.Post("/banco", bancoController.Create)
 	server.router.Get("/banco", bancoController.ListAll)
 	server.router.Get("/banco/{id}", bancoController.GetByID)
+	server.router.Delete("/banco/{id}", bancoController.DeleteByID)
+	server.router.Put("/banco/{id}", bancoController.Update)
 
 }
 
