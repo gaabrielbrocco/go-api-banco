@@ -2,8 +2,8 @@ package server
 
 import (
 	"net/http"
-	"teste/internals/core/domain"
-	"teste/internals/infra/controller"
+	"teste/internal/core/domain"
+	"teste/internal/infra/controller"
 
 	"github.com/go-chi/chi"
 )

@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"context"
-	"teste/internals/core/domain"
-	"teste/internals/core/dto"
+	"teste/internal/core/domain"
+	"teste/internal/core/dto"
 )
 
 type bancoUseCase struct {

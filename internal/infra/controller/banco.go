@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"database/sql"
 	"strconv"
+	"strings"
 	"net/http"
-	"teste/internals/core/domain"
-	"teste/internals/core/dto"
+	"teste/internal/core/domain"
+	"teste/internal/core/dto"
 	"github.com/go-chi/chi"
 )
 

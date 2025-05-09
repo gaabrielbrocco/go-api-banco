@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"teste/internals/core/usecase"
-	"teste/internals/infra/repository"
-	"teste/internals/infra/server"
+	"teste/internal/core/usecase"
+	"teste/internal/infra/repository"
+	"teste/internal/infra/server"
 
 	"github.com/spf13/viper"
 	_ "github.com/lib/pq"

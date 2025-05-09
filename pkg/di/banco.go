@@ -2,10 +2,10 @@ package di
 
 import (
 	"database/sql"
-	"teste/internals/core/domain"
-	"teste/internals/core/usecase"
-	"teste/internals/infra/controller"
-	"teste/internals/infra/repository"
+	"teste/internal/core/domain"
+	"teste/internal/core/usecase"
+	"teste/internal/infra/controller"
+	"teste/internal/infra/repository"
 )
 
 func NewBancoController(database *sql.DB) domain.BancoController {

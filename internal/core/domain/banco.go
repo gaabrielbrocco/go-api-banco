@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 	"net/http"
-	"teste/internals/core/dto"
+	"teste/internal/core/dto"
 )
 
 type Banco struct {

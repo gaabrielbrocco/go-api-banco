@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"teste/internals/core/domain"
-	"teste/internals/core/dto"
+	"teste/internal/core/domain"
+	"teste/internal/core/dto"
 )
 
 type bancoRepository struct {
