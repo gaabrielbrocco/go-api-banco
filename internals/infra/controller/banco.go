@@ -23,8 +23,10 @@ func (controller *bancoController) Create(response http.ResponseWriter, request 
 		http.Error(response, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	input.Nome = strings.TrimSpace(input.Nome)
 	if input.Nome == "" {
-		http.Error(response, "nome is required", http.StatusBadRequest)
+ 	 	http.Error(response, "nome is required", http.StatusBadRequest)
 		return
 	}
 
@@ -127,8 +129,10 @@ func (controller *bancoController) Update(response http.ResponseWriter, request 
 		http.Error(response, err.Error(), http.StatusBadRequest)
 		return
 	}
+	
+	input.Nome = strings.TrimSpace(input.Nome)
 	if input.Nome == "" {
-		http.Error(response, "nome is required", http.StatusBadRequest)
+ 	 	http.Error(response, "nome is required", http.StatusBadRequest)
 		return
 	}
 
