@@ -4,9 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"teste/internal/core/usecase"
-	"teste/internal/infra/repository"
 	"teste/internal/infra/server"
+	"teste/pkg/di"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -30,22 +29,22 @@ func initConfig() {
 func runMigrations(db *sql.DB) {
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
-		log.Fatalf("Erro ao criar driver do migrate: %v", err)
+		log.Fatalf("Error creating migrate driver: %v", err)
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://config/database/migrations",
 		"postgres", driver)
 	if err != nil {
-		log.Fatalf("Erro ao inicializar migrate: %v", err)
+		log.Fatalf("Error starting migrate: %v", err)
 	}
 
 	err = m.Up()
 	if err != nil && err != migrate.ErrNoChange {
-		log.Fatalf("Erro ao aplicar migrations: %v", err)
+		log.Fatalf("Error applying migrations: %v", err)
 	}
 
-	fmt.Println("Migrations aplicadas com sucesso!")
+	fmt.Println("Migrations applied successfully")
 }
 
 func main() {
@@ -63,22 +62,21 @@ func main() {
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatal("Erro ao conectar no banco de dados:", err)
+		log.Fatal("Error connecting database:", err)
 	}
 	defer db.Close()
 
 	runMigrations(db)
 
-	bancoRepository := repository.NewBancoRepository(db)
-	bancoUseCase := usecase.NewBancoUseCase(bancoRepository)
+	bancoController := di.NewBancoController(db)
 
 	port := viper.GetString("HTTP_PORT")
-	srv := server.NewServer(bancoUseCase, port)
+	srv := server.NewServer(bancoController, port)
 	srv.ConfigureRoutes()
 
 	if err := srv.Start(); err != nil {
-		log.Fatal("Erro ao iniciar o servidor:", err)
+		log.Fatal("Error starting app:", err)
 	}
 
-	fmt.Println("Rodando na porta:", port)
+	fmt.Println("Run on port:", port)
 }

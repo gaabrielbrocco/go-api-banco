@@ -3,34 +3,32 @@ package server
 import (
 	"net/http"
 	"teste/internal/core/domain"
-	"teste/internal/infra/controller"
 
 	"github.com/go-chi/chi"
 )
 
 type Server struct {
-	router       *chi.Mux
-	server       *http.Server
-	bancoUseCase domain.BancoUseCase
-	port         string
+	router          *chi.Mux
+	server          *http.Server
+	bancoController domain.BancoController
+	port            string
 }
 
-func NewServer(bancoUseCase domain.BancoUseCase, port string) *Server {
+func NewServer(bancoController domain.BancoController, port string) *Server {
 	return &Server{
-		router:       chi.NewRouter(),
-		bancoUseCase: bancoUseCase,
-		port:         port,
+		router:          chi.NewRouter(),
+		bancoController: bancoController,
+		port:            port,
 	}
 }
 
 func (server *Server) ConfigureRoutes() {
-	bancoController := controller.NewBancoController(server.bancoUseCase)
 
-	server.router.Post("/banco", bancoController.Create)
-	server.router.Get("/banco", bancoController.ListAll)
-	server.router.Get("/banco/{id}", bancoController.GetByID)
-	server.router.Delete("/banco/{id}", bancoController.DeleteByID)
-	server.router.Put("/banco/{id}", bancoController.Update)
+	server.router.Post("/banco", server.bancoController.Create)
+	server.router.Get("/banco", server.bancoController.ListAll)
+	server.router.Get("/banco/{id}", server.bancoController.GetByID)
+	server.router.Delete("/banco/{id}", server.bancoController.DeleteByID)
+	server.router.Put("/banco/{id}", server.bancoController.Update)
 
 }
 
