@@ -8,20 +8,44 @@ import (
 	"teste/internal/infra/repository"
 	"teste/internal/infra/server"
 
-	"github.com/spf13/viper"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
+	"github.com/spf13/viper"
 )
 
 func initConfig() {
-	viper.SetConfigName(".env")  
-	viper.SetConfigType("env")   
+	viper.SetConfigName(".env")
+	viper.SetConfigType("env")
 	viper.AddConfigPath("/app")
-	viper.AutomaticEnv()      
+	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalf("Error reading configuration file: %v", err)
 	}
+}
+
+func runMigrations(db *sql.DB) {
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		log.Fatalf("Erro ao criar driver do migrate: %v", err)
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://config/database/migrations",
+		"postgres", driver)
+	if err != nil {
+		log.Fatalf("Erro ao inicializar migrate: %v", err)
+	}
+
+	err = m.Up()
+	if err != nil && err != migrate.ErrNoChange {
+		log.Fatalf("Erro ao aplicar migrations: %v", err)
+	}
+
+	fmt.Println("Migrations aplicadas com sucesso!")
 }
 
 func main() {
@@ -42,6 +66,8 @@ func main() {
 		log.Fatal("Erro ao conectar no banco de dados:", err)
 	}
 	defer db.Close()
+
+	runMigrations(db)
 
 	bancoRepository := repository.NewBancoRepository(db)
 	bancoUseCase := usecase.NewBancoUseCase(bancoRepository)
