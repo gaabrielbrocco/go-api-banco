@@ -1,13 +1,17 @@
 package controller
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 	"teste/internal/core/domain"
 	"teste/internal/core/dto"
 	"teste/internal/infra/repository"
+
+	"github.com/go-chi/chi"
 )
 
 type usuarioController struct {
@@ -59,6 +63,35 @@ func (controller *usuarioController) ListAll(response http.ResponseWriter, reque
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 		return
+	}
+}
+
+func (controller *usuarioController) GetByID(response http.ResponseWriter, request *http.Request) {
+	ctx := request.Context()
+
+	idString := chi.URLParam(request, "id")
+	if idString == "" {
+		http.Error(response, "id is required", http.StatusBadRequest)
+	}
+
+	id, err := strconv.ParseInt(idString, 10, 64)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusBadRequest)
+	}
+
+	output, err := controller.usuarioUseCase.GetByID(ctx, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(response, "record not found", http.StatusNotFound)
+			return
+		}
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(response).Encode(output)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
 }
 

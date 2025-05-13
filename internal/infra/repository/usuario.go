@@ -57,6 +57,19 @@ func (repository *usuarioRepository) ListAll(ctx context.Context) ([]domain.Usua
 	return usuarios, nil
 }
 
+func (repository *usuarioRepository) GetByID(ctx context.Context, id int64) (domain.Usuario, error) {
+	var usuario domain.Usuario
+
+	query := "SELECT * FROM usuario WHERE id = $1"
+
+	err := repository.db.QueryRowContext(ctx, query, id).Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.Cpf)
+	if err != nil {
+		return domain.Usuario{}, err
+	}
+
+	return usuario, nil
+}
+
 func NewUsuarioRepository(db *sql.DB) domain.UsuarioRepository {
 	return &usuarioRepository{
 		db: db,

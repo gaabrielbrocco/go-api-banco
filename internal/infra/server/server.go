@@ -34,6 +34,7 @@ func (server *Server) ConfigureRoutes() {
 
 	server.router.Post("/usuario", server.usuarioController.Create)
 	server.router.Get("/usuario", server.usuarioController.ListAll)
+	server.router.Get("/usuario/{id}", server.usuarioController.GetByID)
 }
 
 func (server *Server) Start() error {
