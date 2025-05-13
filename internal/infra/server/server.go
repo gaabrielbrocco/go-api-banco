@@ -8,17 +8,19 @@ import (
 )
 
 type Server struct {
-	router          *chi.Mux
-	server          *http.Server
-	bancoController domain.BancoController
-	port            string
+	router            *chi.Mux
+	server            *http.Server
+	bancoController   domain.BancoController
+	usuarioController domain.UsuarioController
+	port              string
 }
 
-func NewServer(bancoController domain.BancoController, port string) *Server {
+func NewServer(bancoController domain.BancoController, usuarioController domain.UsuarioController, port string) *Server {
 	return &Server{
-		router:          chi.NewRouter(),
-		bancoController: bancoController,
-		port:            port,
+		router:            chi.NewRouter(),
+		bancoController:   bancoController,
+		usuarioController: usuarioController,
+		port:              port,
 	}
 }
 
@@ -30,6 +32,7 @@ func (server *Server) ConfigureRoutes() {
 	server.router.Delete("/banco/{id}", server.bancoController.DeleteByID)
 	server.router.Put("/banco/{id}", server.bancoController.Update)
 
+	server.router.Post("/usuario", server.usuarioController.Create)
 }
 
 func (server *Server) Start() error {

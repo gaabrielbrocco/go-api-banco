@@ -69,9 +69,10 @@ func main() {
 	runMigrations(db)
 
 	bancoController := di.NewBancoController(db)
+	usuarioController := di.NewUsuarioController(db)
 
 	port := viper.GetString("HTTP_PORT")
-	srv := server.NewServer(bancoController, port)
+	srv := server.NewServer(bancoController, usuarioController, port)
 	srv.ConfigureRoutes()
 
 	if err := srv.Start(); err != nil {
