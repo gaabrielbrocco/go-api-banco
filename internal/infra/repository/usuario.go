@@ -32,6 +32,31 @@ func (repository *usuarioRepository) Create(ctx context.Context, input *dto.Usua
 	return usuario, nil
 }
 
+func (repository *usuarioRepository) ListAll(ctx context.Context) ([]domain.Usuario, error) {
+	query := "SELECT id, nome, email, cpf FROM usuario"
+	rows, err := repository.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var usuarios []domain.Usuario
+
+	for rows.Next() {
+		var usuario domain.Usuario
+		if err := rows.Scan(&usuario.ID, &usuario.Nome, &usuario.Email, &usuario.Cpf); err != nil {
+			return nil, err
+		}
+		usuarios = append(usuarios, usuario)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return usuarios, nil
+}
+
 func NewUsuarioRepository(db *sql.DB) domain.UsuarioRepository {
 	return &usuarioRepository{
 		db: db,

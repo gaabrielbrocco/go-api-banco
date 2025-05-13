@@ -14,6 +14,10 @@ func (usecase *usuarioUseCase) Create(ctx context.Context, input *dto.UsuarioInp
 	return usecase.usuarioRepository.Create(ctx, input)
 }
 
+func (usecase *usuarioUseCase) ListAll(ctx context.Context) ([]domain.Usuario, error) {
+	return usecase.usuarioRepository.ListAll(ctx)
+}
+
 func NewUsuarioUseCase(usuarioRepository domain.UsuarioRepository) domain.UsuarioUseCase {
 	return &usuarioUseCase{
 		usuarioRepository: usuarioRepository,

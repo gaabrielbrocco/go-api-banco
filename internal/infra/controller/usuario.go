@@ -46,6 +46,22 @@ func (controller *usuarioController) Create(response http.ResponseWriter, reques
 	json.NewEncoder(response).Encode(output)
 }
 
+func (controller *usuarioController) ListAll(response http.ResponseWriter, request *http.Request) {
+	ctx := request.Context()
+
+	output, err := controller.usuarioUseCase.ListAll(ctx)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(response).Encode(output)
+	if err != nil {
+		http.Error(response, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func NewUsuarioController(usuarioUseCase domain.UsuarioUseCase) domain.UsuarioController {
 	return &usuarioController{
 		usuarioUseCase: usuarioUseCase,

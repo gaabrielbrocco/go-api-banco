@@ -33,6 +33,7 @@ func (server *Server) ConfigureRoutes() {
 	server.router.Put("/banco/{id}", server.bancoController.Update)
 
 	server.router.Post("/usuario", server.usuarioController.Create)
+	server.router.Get("/usuario", server.usuarioController.ListAll)
 }
 
 func (server *Server) Start() error {

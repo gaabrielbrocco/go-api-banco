@@ -15,12 +15,15 @@ type Usuario struct {
 
 type UsuarioRepository interface {
 	Create(context.Context, *dto.UsuarioInput) (Usuario, error)
+	ListAll(context.Context) ([]Usuario, error)
 }
 
 type UsuarioUseCase interface {
 	Create(context.Context, *dto.UsuarioInput) (Usuario, error)
+	ListAll(context.Context) ([]Usuario, error)
 }
 
 type UsuarioController interface {
 	Create(http.ResponseWriter, *http.Request)
+	ListAll(http.ResponseWriter, *http.Request)
 }
