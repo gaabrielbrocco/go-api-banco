@@ -70,9 +70,10 @@ func main() {
 
 	bancoController := di.NewBancoController(db)
 	usuarioController := di.NewUsuarioController(db)
+	contaController := di.NewContaController(db)
 
 	port := viper.GetString("HTTP_PORT")
-	srv := server.NewServer(bancoController, usuarioController, port)
+	srv := server.NewServer(bancoController, usuarioController, contaController, port)
 	srv.ConfigureRoutes()
 
 	if err := srv.Start(); err != nil {

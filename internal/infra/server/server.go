@@ -12,14 +12,16 @@ type Server struct {
 	server            *http.Server
 	bancoController   domain.BancoController
 	usuarioController domain.UsuarioController
+	contaController   domain.ContaController
 	port              string
 }
 
-func NewServer(bancoController domain.BancoController, usuarioController domain.UsuarioController, port string) *Server {
+func NewServer(bancoController domain.BancoController, usuarioController domain.UsuarioController, contaController domain.ContaController, port string) *Server {
 	return &Server{
 		router:            chi.NewRouter(),
 		bancoController:   bancoController,
 		usuarioController: usuarioController,
+		contaController:   contaController,
 		port:              port,
 	}
 }
@@ -35,6 +37,8 @@ func (server *Server) ConfigureRoutes() {
 	server.router.Post("/usuario", server.usuarioController.Create)
 	server.router.Get("/usuario", server.usuarioController.ListAll)
 	server.router.Get("/usuario/{id}", server.usuarioController.GetByID)
+
+	server.router.Post("/conta", server.contaController.Create)
 }
 
 func (server *Server) Start() error {
