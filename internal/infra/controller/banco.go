@@ -141,7 +141,6 @@ func (controller *bancoController) Update(response http.ResponseWriter, request 
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
-
 	err = json.NewEncoder(response).Encode(output)
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
