@@ -104,7 +104,6 @@ func (controller *bancoController) DeleteByID(response http.ResponseWriter, requ
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
-
 	err = json.NewEncoder(response).Encode(output)
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
@@ -141,7 +140,7 @@ func (controller *bancoController) Update(response http.ResponseWriter, request 
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
-	err = json.NewEncoder(response).Encode(output)
+	err = json.NewEnc	oder(response).Encode(output)
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
