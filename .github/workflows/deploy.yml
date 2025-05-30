@@ -1,0 +1,52 @@
+name: Build and Deploy Go API via SSH
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      - name: Criar o arquivo .env com os valores do secret
+        run: |
+          echo "${{ secrets.ENV }}" > .env
+
+      - name: Construir a imagem Docker
+        run: |
+          export $(grep -v '^#' .env | xargs) 
+
+          docker build \
+            --build-arg DB_PASSWORD=$DB_PASSWORD \
+            --build-arg DB_PORT=$DB_PORT \
+            --build-arg DB_SSL_MODE=$DB_SSL_MODE \
+            -t go-api-banco:latest .
+
+      - name: Salvar imagem como .tar
+        run: docker save -o go-api-banco.tar go-api-banco:latest
+
+      - name: Enviar imagem para o servidor via SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "go-api-banco.tar"
+          target: "~/"
+
+      - name: Fazer deploy da imagem via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker load -i ~/go-api-banco.tar
+            docker stop go-api-banco || true
+            docker rm go-api-banco || true
+            docker run -d --name go-api-banco -p 8080:8080 go-api-banco:latest

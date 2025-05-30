@@ -1,13 +1,14 @@
 package controller
 
 import (
-	"encoding/json"
 	"database/sql"
+	"encoding/json"
+	"net/http"
 	"strconv"
 	"strings"
-	"net/http"
 	"teste/internal/core/domain"
 	"teste/internal/core/dto"
+
 	"github.com/go-chi/chi"
 )
 
@@ -27,7 +28,7 @@ func (controller *bancoController) Create(response http.ResponseWriter, request 
 
 	input.Nome = strings.TrimSpace(input.Nome)
 	if input.Nome == "" {
- 	 	http.Error(response, "nome is required", http.StatusBadRequest)
+		http.Error(response, "nome is required", http.StatusBadRequest)
 		return
 	}
 
@@ -73,13 +74,13 @@ func (controller *bancoController) GetByID(response http.ResponseWriter, request
 
 func (controller *bancoController) ListAll(response http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
-	
+
 	output, err := controller.bancoUseCase.ListAll(ctx)
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	err = json.NewEncoder(response).Encode(output)
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
@@ -129,10 +130,10 @@ func (controller *bancoController) Update(response http.ResponseWriter, request 
 		http.Error(response, err.Error(), http.StatusBadRequest)
 		return
 	}
-	
+
 	input.Nome = strings.TrimSpace(input.Nome)
 	if input.Nome == "" {
- 	 	http.Error(response, "nome is required", http.StatusBadRequest)
+		http.Error(response, "nome is required", http.StatusBadRequest)
 		return
 	}
 
@@ -140,7 +141,7 @@ func (controller *bancoController) Update(response http.ResponseWriter, request 
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
-	err = json.NewEnc	oder(response).Encode(output)
+	err = json.NewEncoder(response).Encode(output)
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
